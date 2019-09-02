@@ -39,16 +39,26 @@ $ docker-compose start
 # webコンテナにアタッチ
 $ docker-compose exec web bash
 
-# -- slim-framework のスケルトン・プロジェクトを作成する場合、以下を実行 --
-
-# projectディレクトリを空にする
-% rm -Rf ./*
-
-# slim-framework スケルトン構築
-% composer create-project slim/slim-skeleton .
-
-# -- すでに存在するプロジェクトを引き継ぐ場合、以下を実行 --
-
-# Composer依存パッケージインストール
+# composer.json に記述されたパッケージをインストール
 % composer install
+```
+
+#### Memo: Install Slim Framework
+[公式リファレンス](https://www.slimframework.com/docs/v4/start/installation.html) を参考にインストール
+
+```bash
+# Install Slim Framework
+% composer require slim/slim:4.0.0
+
+# Install Slim PSR-7
+% composer require slim/psr7
+
+# Install Nyholm PSR-7 and Nyholm PSR-7 Server
+% composer require nyholm/psr7 nyholm/psr7-server
+
+# Install Guzzle PSR-7 and Guzzle HTTP Factory
+% composer require guzzlehttp/psr7 http-interop/http-factory-guzzle
+
+# Install Zend Diactoros
+% composer require zendframework/zend-diactoros
 ```
