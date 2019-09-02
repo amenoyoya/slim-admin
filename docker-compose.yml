@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  web:
+    build: ./web
+    links:
+      - db # dbコンテナとリンク
+      - mailhog # mailhogコンテナとリンク
+    volumes:
+      # 共有ディレクトリ
+      - ./html:/var/www/html # ドキュメントルート
+      # virtualhost設定ファイル
+      - ./web/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      # php設定ファイルを共有
+      - ./web/php.ini:/etc/php.d/php.ini
+    network_mode: bridge
+    environment:
+      # dbコンテナのDBに接続するための環境設定
+      DB_HOST: mysql
+      DB_DATABASE: web
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      # VIRTUAL_HOST設定（nginx-proxy）
+      VIRTUAL_HOST: slim-admin.localhost # http://slim-admin.localhost => docker://web:80
+      VIRTUAL_PORT: 80
+  db:
+    build: ./db
+    volumes:
+      # DB永続化
+      - db-data:/var/lib/mysql
+      # 起動時にinitdb.d内で定義されたデータベースを構築する
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    network_mode: bridge
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: web
+  pma:
+    image: phpmyadmin/phpmyadmin:latest
+    network_mode: bridge
+    environment:
+      PMA_HOST: db
+      # VIRTUAL_HOST設定（nginx-proxy）
+      VIRTUAL_HOST: pma.slim-admin.localhost # http://pma.slim-admin.localhost => docker://pma:80
+      VIRTUAL_PORT: 80
+    links:
+      - db
+  mailhog:
+    image: mailhog/mailhog
+    # ports:
+      # - 8025:8025 # HTTP Port (nginx-proxyコンテナを使っているならポート設定は不要)
+      # - 1025:1025 # SMTP Port
+    network_mode: bridge
+    environment:
+      # VIRTUAL_HOST設定（nginx-proxy）
+      VIRTUAL_HOST: mail.slim-admin.localhost # http://mail.slim-admin.localhost => docker://mailhog:8025
+      VIRTUAL_PORT: 8025
+volumes:
+  db-data:
+    driver: local
