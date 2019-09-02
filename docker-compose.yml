@@ -15,6 +15,9 @@ services:
       - ./web/php.ini:/etc/php.d/php.ini
     network_mode: bridge
     environment:
+      # Composer設定
+      COMPOSER_ALLOW_SUPERUSER: 1 # root権限での実行を許可
+      COMPOSER_NO_INTERACTION: 1  # 非対話的にインストール
       # dbコンテナのDBに接続するための環境設定
       DB_HOST: mysql
       DB_DATABASE: web
