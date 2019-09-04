@@ -1,8 +1,29 @@
 import Vue from 'vue';
-import App from './App'    
+import Router from 'vue-router';
+import Home from './components/Home';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+
+Vue.use(Router);
+
+const router = new Router({
+  mode: 'history',
+  base: '/',
+  routes: [
+    {
+      path: '/login/',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: Dashboard
+    },
+  ]
+});
 
 new Vue({
-  el: '#app', // Vueでマウントする要素
-  components: { App }, // 使用するコンポーネント
-  template: '<app/>', // el（#app）の中に表示する内容
-});
+  router,
+  render: h => h(Home)
+}).$mount('#app');
