@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -29,9 +31,18 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.username);
-      console.log(this.password);
-      this.$router.push('/dashboard/');
+      // console.log(this.username);
+      // console.log(this.password);
+      const csrf = document.getElementById('csrf').value;
+      console.log(csrf);
+      axios.post('/api_test/')
+        .then((res) => {
+          console.log(res);
+          // this.$router.push('/dashboard/');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }
 }
