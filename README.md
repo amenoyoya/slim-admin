@@ -6,6 +6,9 @@ Administrator page by PHP slim-framework
 
 - Docker: `19.03.2`
 - DockerCompose: `1.24.0`
+- CLI:
+    - Node.js: `10.15.3`
+    - yarn: `1.15.2`
 
 ### Structure
 ```conf
