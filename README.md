@@ -34,7 +34,7 @@ Administrator page by PHP slim-framework
 ```bash
 # Dockerコンテナをビルド＆起動
 $ docker-compose build
-$ docker-compose start
+$ docker-compose up -d
 
 # webコンテナにアタッチ
 $ docker-compose exec web bash

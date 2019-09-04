@@ -12,7 +12,7 @@ services:
       # virtualhost設定ファイル
       - ./web/000-default.conf:/etc/apache2/sites-available/000-default.conf
       # php設定ファイルを共有
-      - ./web/php.ini:/etc/php.d/php.ini
+      - ./web/php.ini:/usr/local/etc/php/php.ini
     network_mode: bridge
     environment:
       # Composer設定
