@@ -5,6 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 return function ($app, $api) {
+    /*
     // phpinfo
     $app->get('/phpinfo/', function (Request $request, Response $response, array $args) {
         $response->getBody()->write(phpinfo());
@@ -30,9 +31,19 @@ return function ($app, $api) {
         $response->getBody()->write(json_encode($posted));
         return $response;
     });
+    */
 
-    // api test
-    $api('/api_test/', function (Request $request, Response $response, array $args) {
-        return ['text' => 'API success'];
+    // login api
+    $api('/api/login/', function (Request $request, Response $response, array $args, array $json) {
+        if (!isset($json['username']) || !isset($json['password'])) {
+            return ['login' => false, 'message' => 'Invalid parameters'];
+        }
+        if ($json['username'] === 'admin' && $json['password'] === 'pa$$wd') {
+            // tokenを発行してログインさせる
+            $authToken = bin2hex(openssl_random_pseudo_bytes(16));
+            $_SESSION['auth_token'] = $authToken;
+            return ['login' => true, 'token' => $authToken, 'message' => 'Login as admin'];
+        }
+        return ['login' => false, 'message' => 'Invalid username or password'];
     });
 };

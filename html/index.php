@@ -34,17 +34,17 @@ function main(string $html)
     $api = function (string $route, $callback) use ($app) {
         $app->post($route, function (Request $request, Response $response, array $args) use ($app, $callback) {
             // only accept json data post
-            $json = json_decode($request->getBody());
+            $json = json_decode($request->getBody(), true);
             // confirm csrf token & host name
             if (!isset($_SESSION['csrf_token']) ||
-                !isset($json->csrf) ||
-                $_SESSION['csrf_token'] !== $json->csrf ||
+                !isset($json['csrf']) ||
+                $_SESSION['csrf_token'] !== $json['csrf'] ||
                 $request->getHeaders()['Host'][0] !== HOST_NAME
             ) {
                 return $response;
             }
             // callback: return array $json;
-            $response->getBody()->write(json_encode($callback($request, $response, $args)));
+            $response->getBody()->write(json_encode($callback($request, $response, $args, $json)));
             return $response->withHeader('Content-Type', 'application/json');
         });
     };

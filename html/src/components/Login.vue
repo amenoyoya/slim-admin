@@ -26,19 +26,21 @@ export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      token: ''
     };
   },
   methods: {
     login() {
-      // console.log(this.username);
-      // console.log(this.password);
       const csrf = document.getElementById('csrf').value;
-      console.log(csrf);
-      axios.post('/api_test/', {csrf: csrf})
+      axios.post('/api/login/', {csrf: csrf, username: this.username, password: this.password})
         .then((res) => {
-          console.log(res);
-          // this.$router.push('/dashboard/');
+          if (res.data.login) {
+            this.token = res.data.token; // 認証トークン
+            this.$router.push('/dashboard/');
+          } else {
+            alert(res.data.message);
+          }
         })
         .catch((err) => {
           console.log(err);
