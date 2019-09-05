@@ -10,7 +10,7 @@ return <<<HTML
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     </head>
     <body>
-        <input id="csrf" type="hidden" value="{$csrfToken}">
+        <input id="csrf" type="hidden" value="%s">
         <div id="app"></div>
         <script src="./js/bundle.js"></script>
     </body>

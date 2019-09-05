@@ -1,3 +1,3 @@
 <?php
 
-define(HOST_NAME, 'slim-admin.localhost');
+define('HOST_NAME', 'slim-admin.localhost');

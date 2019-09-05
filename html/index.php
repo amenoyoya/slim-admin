@@ -5,38 +5,47 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/config.php';
 
-function main(string $html, string $csrfToken) {
+function debug(string $message, string $filename = './log.txt')
+{
+    file_put_contents($filename, $message."\n", FILE_APPEND);
+}
+
+function main(string $html)
+{
     session_start();
-
-    // save csrf token to session
-    $_SESSION['csrf_token'] = $csrfToken;
 
     // slim framework app
     $app = AppFactory::create();
 
     // index routing
-    $app->get('/', function (Request $request, Response $response, array $args) use($html) {
-        $response->getBody()->write($html);
+    $app->get('/', function (Request $request, Response $response, array $args) use ($html) {
+        // generate csrf token
+        $csrfToken = bin2hex(openssl_random_pseudo_bytes(16));
+        // save csrf token to session
+        $_SESSION['csrf_token'] = $csrfToken;
+
+        $response->getBody()->write(sprintf($html, $csrfToken));
         return $response;
     });
 
     // function for api definition
-    $api = function (string $route, $callback) use($app) {
-        $app->post($route, function (Request $request, Response $response, array $args) use($callback) {
+    $api = function (string $route, $callback) use ($app) {
+        $app->post($route, function (Request $request, Response $response, array $args) use ($app, $callback) {
             // only accept json data post
             $json = json_decode($request->getBody());
             // confirm csrf token & host name
-            if (
-                !isset($_SESSION['csrf_token']) ||
+            if (!isset($_SESSION['csrf_token']) ||
                 !isset($json->csrf) ||
                 $_SESSION['csrf_token'] !== $json->csrf ||
-                $request->getHost() !== 'slim-admin.localhost'
+                $request->getHeaders()['Host'][0] !== HOST_NAME
             ) {
                 return $response;
             }
             // callback: return array $json;
-            return $response->wthJson($callback($request, $response, $args));
+            $response->getBody()->write(json_encode($callback($request, $response, $args)));
+            return $response->withHeader('Content-Type', 'application/json');
         });
     };
 
@@ -47,5 +56,4 @@ function main(string $html, string $csrfToken) {
 }
 
 # render root page
-$csrfToken = bin2hex(openssl_random_pseudo_bytes(16));
-main(require __DIR__ . '/api/index.php', $csrfToken);
+main(require __DIR__ . '/api/index.php');

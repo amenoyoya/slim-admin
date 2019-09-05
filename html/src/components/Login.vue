@@ -35,7 +35,7 @@ export default {
       // console.log(this.password);
       const csrf = document.getElementById('csrf').value;
       console.log(csrf);
-      axios.post('/api_test/')
+      axios.post('/api_test/', {csrf: csrf})
         .then((res) => {
           console.log(res);
           // this.$router.push('/dashboard/');
