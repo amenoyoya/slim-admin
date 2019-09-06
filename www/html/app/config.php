@@ -1,6 +1,9 @@
 <?php
 
-return <<<HTML
+define('HOST_NAME', 'slim-admin.localhost');
+
+define('HOME_HTML',
+<<<HTML
 <!DOCTYPE html>
 <html lang="ja">
     <head>
@@ -15,4 +18,5 @@ return <<<HTML
         <script src="./js/bundle.js"></script>
     </body>
 </html>
-HTML;
+HTML
+);

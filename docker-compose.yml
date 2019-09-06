@@ -8,7 +8,7 @@ services:
       - mailhog # mailhogコンテナとリンク
     volumes:
       # 共有ディレクトリ
-      - ./html:/var/www/html # ドキュメントルート
+      - ./www/html:/var/www/html # ドキュメントルート
       # virtualhost設定ファイル
       - ./web/000-default.conf:/etc/apache2/sites-available/000-default.conf
       # php設定ファイルを共有

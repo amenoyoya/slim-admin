@@ -47,21 +47,14 @@ $ docker-compose exec web bash
 ```
 
 #### Memo: Install Slim Framework
-[公式リファレンス](https://www.slimframework.com/docs/v4/start/installation.html) を参考にインストール
+- Environment:
+    - slim: `3.12`
+        - PHP: 5.5 or newer
+        - Web server with URL rewriting
+
+※ slim:4.x は PHP 7.1 以上必須のため、今回は見送り
 
 ```bash
 # Install Slim Framework
-% composer require slim/slim:4.0.0
-
-# Install Slim PSR-7
-% composer require slim/psr7
-
-# Install Nyholm PSR-7 and Nyholm PSR-7 Server
-% composer require nyholm/psr7 nyholm/psr7-server
-
-# Install Guzzle PSR-7 and Guzzle HTTP Factory
-% composer require guzzlehttp/psr7 http-interop/http-factory-guzzle
-
-# Install Zend Diactoros
-% composer require zendframework/zend-diactoros
+% composer require slim/slim "^3.12"
 ```
