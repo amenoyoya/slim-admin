@@ -1,6 +1,8 @@
 <?php
 
 namespace Slim\Framework;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -12,27 +14,50 @@ class Application {
 
     public static function create()
     {
-        self::$app = new \Slim\App;
+        self::$app = new \Slim\App([
+            'settings' => [
+                'displayErrorDetails' => true,
+            ],
+        ]);
     }
 
-    public static function get(string $route, callable $callback)
+    public static function get($route, callable $callback)
     {
         return self::$app->get($route, $callback);
     }
 
-    public static function post(string $route, callable $callback)
+    public static function post($route, callable $callback)
     {
         return self::$app->post($route, $callback);
     }
 
-    public static function put(string $route, callable $callback)
+    public static function put($route, callable $callback)
     {
         return self::$app->put($route, $callback);
     }
 
-    public static function delete(string $route, callable $callback)
+    public static function delete($route, callable $callback)
     {
         return self::$app->delete($route, $callback);
+    }
+
+    public static function api($method, $route, callable $callback)
+    {
+        return self::$app->post($route, function (Request $request, Response $response, array $args) use ($callback) {
+            // only accept json data
+            $json = json_decode($request->getBody(), true);
+            // confirm csrf token & host name
+            if (!isset($_SESSION['csrf_token']) ||
+                !isset($json['csrf']) ||
+                $_SESSION['csrf_token'] !== $json['csrf'] ||
+                $request->getHeaders()['HTTP_HOST'][0] !== HOST_NAME
+            ) {
+                return $response->withStatus(403); // Forbidden error
+            }
+            // callback: return array $json;
+            $response->getBody()->write(json_encode($callback($request, $response, $args, $json)));
+            return $response->withHeader('Content-Type', 'application/json');
+        });
     }
 
     public static function execute()

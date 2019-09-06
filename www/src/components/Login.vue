@@ -37,6 +37,7 @@ export default {
         .then((res) => {
           if (res.data.login) {
             this.token = res.data.token; // 認証トークン
+            console.log(this.token);
             this.$router.push('/dashboard/');
           } else {
             alert(res.data.message);

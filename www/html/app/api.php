@@ -31,7 +31,7 @@ Application::post('/test/', function (Request $request, Response $response, arra
 });
 
 // login api
-/*$api('/api/login/', function (Request $request, Response $response, array $args, array $json) {
+Application::api('post', '/api/login/', function (Request $request, Response $response, array $args, array $json) {
     if (!isset($json['username']) || !isset($json['password'])) {
         return ['login' => false, 'message' => 'Invalid parameters'];
     }
@@ -43,4 +43,3 @@ Application::post('/test/', function (Request $request, Response $response, arra
     }
     return ['login' => false, 'message' => 'Invalid username or password'];
 });
-*/
