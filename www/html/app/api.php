@@ -52,3 +52,25 @@ Application::api('post', '/api/logout/', function (Request $request, Response $r
     }
     return ['token' => 'null', 'username' => ''];
 });
+
+// sign up api
+Application::api('post', '/api/signup/', function (Request $request, Response $response, array $args, array $json) {
+    if (!isset($json['username']) || !isset($json['password'])
+        || strlen($json['username']) > 15 || strlen($json['password']) > 30
+    ) {
+        return ['reg' => false, 'message' => 'Invalid parameters'];
+    }
+    $users = Model\User::find('all', ['conditions' => ['name' => $json['username']]]);
+    if (count($users) > 0) {
+        return ['reg' => false, 'message' => "User '{$json['username']}' already exists"];
+    }
+    // register
+    $date = new \DateTime();
+    $user = new Model\User();
+    $user->name = $json['username'];
+    $user->password = password_hash($json['password'], PASSWORD_BCRYPT);
+    if ($user->save()) {
+        return ['reg' => true, 'message' => "User '{$user->name}' registerd"];
+    }
+    return ['reg' => false, 'message' => 'Database error occured'];
+});

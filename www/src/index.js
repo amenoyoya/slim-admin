@@ -5,7 +5,7 @@ import axios from 'axios';
 import 'babel-polyfill'; // IE11 polyfill
 
 // VeeValidate
-import { ValidationProvider, extend, localize } from 'vee-validate';
+import { ValidationProvider, ValidationObserver, extend, localize } from 'vee-validate';
 import * as rules from 'vee-validate/dist/rules';
 import ja from 'vee-validate/dist/locale/ja';
 
@@ -21,6 +21,7 @@ Vue.use(Vuex);
 
 // Vee-Validate
 Vue.component('vee-validator', ValidationProvider);
+Vue.component('vee-observer', ValidationObserver);
 for (let rule in rules) {
   extend(rule, {
     ...rules[rule],
