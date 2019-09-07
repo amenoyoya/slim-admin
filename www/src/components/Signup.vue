@@ -12,20 +12,36 @@
     </transition>
 
     <form @submit.prevent="signup">
-      <div class="field">
+      <vee-validator class="field" rules="required|alpha_num|max:15" v-slot="{errors}" name="ユーザー名">
         <label for="username" class="label">Username</label>
         <div class="control">
-          <input id="username" class="input" type="text" v-model="username" placeholder="admin">
+          <input name="username" class="input" type="text" v-model="username" placeholder="admin">
         </div>
-        <p class="is-size-7">※ユーザー名は15文字以内のアルファベットを指定してください</p>
-      </div>
-      <div class="field">
+        <p class="is-size-7">※ユーザー名は15文字以内の半角英数字を指定してください</p>
+        <transition
+          name="custom-classes-transition"
+          enter-active-class="animated fadeInLeft"
+          leave-active-class="animated fadeOutRight"
+        >
+          <p class="notification is-warning" v-if="errors.length > 0">{{ errors[0] }}</p>
+        </transition>
+      </vee-validator>
+
+      <vee-validator class="field" rules="required|max:30" v-slot="{errors}" name="パスワード">
         <label for="password" class="label">Password</label>
         <div class="control">
           <input id="password" class="input" type="password" v-model="password">
-          <p class="is-size-7">※パスワードは30文字以内で指定してください</p>
         </div>
-      </div>
+        <p class="is-size-7">※パスワードは30文字以内で指定してください</p>
+        <transition
+          name="custom-classes-transition"
+          enter-active-class="animated fadeInLeft"
+          leave-active-class="animated fadeOutRight"
+        >
+          <p class="notification is-warning" v-if="errors.length > 0">{{ errors[0] }}</p>
+        </transition>
+      </vee-validator>
+
       <div>
         <button class="button is-link" type="submit">Sign up</button>
       </div>

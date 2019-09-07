@@ -38,12 +38,22 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        // jsonファイル
+        test: /\.json$/,
+        type: "javascript/auto",
+        use: [
+          {
+            loader: 'json-loader'
+          }
+        ]
       }
     ]
   },
   // import設定
   resolve: {
-    extensions: [".js", ".vue"], // .js, .vue を import
+    extensions: [".js", ".vue", ".json"], // .js, .vue, .json を import
     modules: ["node_modules"],
     alias: {
       vue$: 'vue/dist/vue.esm.js', // vue-template-compiler用

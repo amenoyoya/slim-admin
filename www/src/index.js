@@ -3,6 +3,13 @@ import Router from 'vue-router';
 import Vuex from 'vuex';
 import axios from 'axios';
 import 'babel-polyfill'; // IE11 polyfill
+
+// VeeValidate
+import { ValidationProvider, extend, localize } from 'vee-validate';
+import * as rules from 'vee-validate/dist/rules';
+import ja from 'vee-validate/dist/locale/ja';
+
+// Components
 import NavBar from './components/parts/NavBar';
 import Home from './components/Home';
 import Login from './components/Login';
@@ -11,6 +18,15 @@ import Dashboard from './components/Dashboard';
 
 Vue.use(Router);
 Vue.use(Vuex);
+
+// Vee-Validate
+Vue.component('vee-validator', ValidationProvider);
+for (let rule in rules) {
+  extend(rule, {
+    ...rules[rule],
+    message: ja.messages[rule]
+  });
+}
 
 // <nav-bar> コンポーネント追加
 Vue.component('nav-bar', NavBar);
