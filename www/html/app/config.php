@@ -1,6 +1,7 @@
 <?php
 
 define('HOST_NAME', 'slim-admin.localhost');
+define('USE_DATABASE', true);
 
 define('HOME_HTML',
 <<<HTML

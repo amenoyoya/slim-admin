@@ -4,8 +4,13 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Framework\Application;
 
-require __DIR__ . '/app/app.php';
-require __DIR__ . '/app/config.php';
+require_once __DIR__ . '/app/app.php';
+require_once __DIR__ . '/app/config.php';
+
+// use database
+if (USE_DATABASE) {
+    require_once __DIR__ . '/db/bootstrap.php';
+}
 
 session_start();
 
@@ -25,6 +30,6 @@ Application::get('/', function (Request $request, Response $response, array $arg
 });
 
 // load all api
-require __DIR__ . '/app/api.php';
+require_once __DIR__ . '/app/api.php';
 
 Application::execute();
