@@ -36,7 +36,7 @@ services:
     network_mode: bridge
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: web
+      MYSQL_DATABASE: slim_admin
   pma:
     image: phpmyadmin/phpmyadmin:latest
     network_mode: bridge

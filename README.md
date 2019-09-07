@@ -136,6 +136,27 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
                 - `token`: 常に 'null' が入る
                 - `username`: 常に '' が入る
 
+### Database: Phinx + php-activerecord
+- マイグレーション: Phinx
+    - 設定ファイル: `www/html/phinx.yml`
+    - コマンド:
+        ```bash
+        # webコンテナにアタッチ
+        $ docker-compose exec web bash
+
+        ---
+
+        # マイグレーションファイル作成
+        % vendor/bin/phinx create <MigrationName>
+        ## -> db/migrations/xxxxxxxx_migration_name.php 生成
+
+        # マイグレーション実行
+        % vendor/bin/phinx migrate
+
+        # マイグレーションrollback
+        % vendor/bin/phinx rollback
+        ```
+
 ### Frontend: Vue + Vuex + Vue-Router
 - Vue: 認証関連の情報を保存
     - state:
