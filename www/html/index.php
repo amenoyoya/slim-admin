@@ -14,12 +14,13 @@ Application::create();
 
 // home routing
 Application::get('/', function (Request $request, Response $response, array $args) {
-    // generate csrf token
-    $csrfToken = bin2hex(openssl_random_pseudo_bytes(16));
-    // save csrf token to session
-    $_SESSION['csrf_token'] = $csrfToken;
-
-    $response->getBody()->write(sprintf(HOME_HTML, $csrfToken));
+    if (!isset($_SESSION['csrf_token'])) {
+        // generate csrf token
+        $csrfToken = bin2hex(openssl_random_pseudo_bytes(16));
+        // save csrf token to session
+        $_SESSION['csrf_token'] = $csrfToken;
+    }
+    $response->getBody()->write(sprintf(HOME_HTML, $_SESSION['csrf_token']));
     return $response;
 });
 

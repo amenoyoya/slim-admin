@@ -18,6 +18,12 @@ class Application {
             'settings' => [
                 'displayErrorDetails' => true,
             ],
+            'notFoundHandler' => function ($c) {
+                return function (Request $request, Response $response) {
+                    // 存在しないページを指定されたときは常に home リダイレクト
+                    return $response->withStatus(302)->withHeader('Location', '/');;
+                };
+            },
         ]);
     }
 
@@ -50,7 +56,7 @@ class Application {
             if (!isset($_SESSION['csrf_token']) ||
                 !isset($json['csrf']) ||
                 $_SESSION['csrf_token'] !== $json['csrf'] ||
-                $request->getHeaders()['HTTP_HOST'][0] !== HOST_NAME
+                $request->getUri()->getHost() !== HOST_NAME
             ) {
                 return $response->withStatus(403); // Forbidden error
             }

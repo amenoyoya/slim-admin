@@ -44,6 +44,16 @@ $ docker-compose exec web bash
 
 # composer.json に記述されたパッケージをインストール
 % composer install
+
+# webコンテナからデタッチ
+% exit
+
+# wwwディレクトリに移動
+$ cd www
+
+# nodejs開発開始
+$ yarn install # 依存パッケージインストール
+$ yarn watch # js, vue ファイル変更検知＆バンドル
 ```
 
 #### Memo: Install Slim Framework
