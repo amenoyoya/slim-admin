@@ -80,7 +80,7 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
     - フレームワークのエントリーポイント
     - htaccessにより、存在しないパスへのアクセスは全てこのファイルにリダイレクトされる
     - CSRFトークンと最低限のHTMLの生成を行う
-        - CSRFトークン: $_SESSION['csrf_token'] に保存
+        - CSRFトークン: `$_SESSION['csrf_token']` に保存
         - 最低限のHTML: `www/html/config.yml` で設定
 - `www/html/app/app.php` ※ 基本的にいじらない
     - Slimフレームワークの薄いラッパークラス `Slim\Framework\Application` を定義

@@ -1,9 +1,11 @@
 <?php
 
-use Slim\Framework\Application;
+namespace Slim\Framework;
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+/*
 // phpinfo
 Application::get('/phpinfo/', function (Request $request, Response $response, array $args) {
     $response->getBody()->write(phpinfo());
@@ -29,18 +31,21 @@ Application::post('/test/', function (Request $request, Response $response, arra
     $response->getBody()->write(json_encode($posted));
     return $response;
 });
+*/
 
 // login api
 Application::api('post', '/api/login/', function (Request $request, Response $response, array $args, array $json) {
     if (!isset($json['username']) || !isset($json['password'])) {
         return ['auth' => false, 'message' => 'Invalid parameters'];
     }
-    if ($json['username'] === 'admin' && $json['password'] === 'pa$$wd') {
+    $users = Model\User::find('all', ['conditions' => ['name' => $json['username']]]);
+    if (count($users) > 0 && password_verify($json['password'], $users[0]->password)) {
         // tokenを発行しセッションに保存
         $authToken = bin2hex(openssl_random_pseudo_bytes(16));
         $_SESSION['auth_token'] = $authToken;
+        $_SESSION['auth_username'] = $users[0]->name;
         // tokenとログインユーザー名を返す
-        return ['auth' => true, 'token' => $authToken, 'username' => 'admin', 'message' => 'Login as admin'];
+        return ['auth' => true, 'token' => $authToken, 'username' => $users[0]->name, 'message' => 'Login as admin'];
     }
     return ['auth' => false, 'message' => 'Invalid username or password'];
 });
@@ -58,8 +63,8 @@ Application::api('post', '/api/auth/', function (Request $request, Response $res
 
 // get session login info api
 Application::api('post', '/api/auth/session/', function (Request $request, Response $response, array $args, array $json) {
-    if (isset($_SESSION['auth_token'])) {
-        return ['token' => $_SESSION['auth_token'], 'username' => 'admin'];
+    if (isset($_SESSION['auth_token']) && isset($_SESSION['auth_username'])) {
+        return ['token' => $_SESSION['auth_token'], 'username' => $_SESSION['auth_username']];
     }
     // 基本的に一回しか実行しないように、セッション保存がない場合は適当な token を返す
     return ['token' => 'null', 'username' => ''];
@@ -69,6 +74,9 @@ Application::api('post', '/api/auth/session/', function (Request $request, Respo
 Application::api('post', '/api/logout/', function (Request $request, Response $response, array $args, array $json) {
     if (isset($_SESSION['auth_token'])) {
         unset($_SESSION['auth_token']);
+    }
+    if (isset($_SESSION['auth_username'])) {
+        unset($_SESSION['auth_username']);
     }
     return ['token' => 'null', 'username' => ''];
 });
