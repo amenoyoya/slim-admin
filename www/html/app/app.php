@@ -1,10 +1,9 @@
 <?php
 
 namespace Slim\Framework;
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-
-require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * slim framework app
@@ -56,7 +55,7 @@ class Application {
             if (!isset($_SESSION['csrf_token']) ||
                 !isset($json['csrf']) ||
                 $_SESSION['csrf_token'] !== $json['csrf'] ||
-                $request->getUri()->getHost() !== HOST_NAME
+                $request->getUri()->getHost() !== CONFIG['web']['host_name']
             ) {
                 return $response->withStatus(403); // Forbidden error
             }

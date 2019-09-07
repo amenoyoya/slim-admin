@@ -1,6 +1,7 @@
 paths:
-    migrations: './db/migrations'
-    seeds: './db/seeds'
+    migrations: ./db/migrations
+    seeds: ./db/seeds
+    models: ./db/models
 
 environments:
     default_migration_table: phinxlog
