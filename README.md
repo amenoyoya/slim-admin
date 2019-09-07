@@ -155,6 +155,13 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
 
         # マイグレーションrollback
         % vendor/bin/phinx rollback
+
+        # シーダーファイル作成
+        % vendor/bin/phinx seed:create <SeederName>
+        ## -> db/seeds/xxxxxxxx_SeederName.php 生成
+
+        # シーディング実行
+        % vendor/bin/phinx seed:run
         ```
 
 ### Frontend: Vue + Vuex + Vue-Router
