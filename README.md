@@ -81,7 +81,7 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
     - htaccessにより、存在しないパスへのアクセスは全てこのファイルにリダイレクトされる
     - CSRFトークンと最低限のHTMLの生成を行う
         - CSRFトークン: $_SESSION['csrf_token'] に保存
-        - 最低限のHTML: `www/html/app/config.php` で設定
+        - 最低限のHTML: `www/html/config.yml` で設定
 - `www/html/app/app.php` ※ 基本的にいじらない
     - Slimフレームワークの薄いラッパークラス `Slim\Framework\Application` を定義
         - `get`, `post`, `put`, `delete` staticメソッド:
@@ -91,13 +91,20 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
             - `(method::string, route::string, (::Request, ::Response, args::array, json::array) -> ::Response) -> ::void`
             - 同一サーバー内からの実行のみを許可するAPIを定義
             - CSRFトークンとホスト名をチェックする
-- `www/html/app/config.php`
-    - 各種設定を行うためのファイル
-        - **HOST_NAME**:
+- `www/html/config.yml`
+    - 各種設定を行うためのファイル（`CONFIG['web']['host_name']` などのようにして参照）
+        - **web.host_name**:
             - `Slim\Framework\Application::api`メソッドで定義されるAPIの実行を許可するホスト名を設定
-        - **HOME_HTML**:
+        - **web.home_html**:
             - ドキュメントルートで生成されるHTMLを定義
             - アプリケーションは Vue で動かすことを前提としているため、基本的にいじることはない
+        - **db.use**:
+            - Databaseを使う場合は true, それ以外なら false を指定
+            - `DB['environments']['default_database']` などのようにして参照
+        - **db.config_file**:
+            - Databaseを使う場合の設定ファイルを指定（phinxの設定ファイルと共有のため、基本的にいじらない）
+- `www/html/phinx.yml`
+    - phinxの設定 兼 DB接続の設定ファイル
 - `www/html/app/api.php`
     - このファイルにAPIを定義していく
     - ユーザー認証関係の組み込みAPI:
