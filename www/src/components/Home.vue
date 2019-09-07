@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  mounted() {
+  async mounted() {
     // ダッシュボードにリダイレクト
     this.$router.push('/dashboard');
   }

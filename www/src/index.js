@@ -23,25 +23,8 @@ const store = new Vuex.Store({
       username: ''
     }
   },
-  getters: {
-    // ログイン済みか判定
-    async authenticated(state) {
-      try {
-        const res = await axios.post('/api/auth/', {csrf: document.getElementById('csrf').value, auth_token: state.auth.token});
-        return {
-          auth: res.data.auth,
-          message: res.data.message
-        }
-      } catch (error) {
-        return {
-          auth: false,
-          status: error.response.status,
-          message: error.response.statusText
-        };
-      }
-    },
-  },
   mutations: {
+    // ログイン状態をセット
     authenticate(state, auth) {
       state.auth.token = auth.token;
       state.auth.username = auth.username;
@@ -68,11 +51,43 @@ const router = new Router({
   ]
 });
 
+// ログイン済みか確認
+const authenticated = async (store) => {
+  try {
+    const res = await axios.post('/api/auth/', {
+      csrf: document.getElementById('csrf').value, auth_token: store.state.auth.token
+    });
+    return res.data;
+  } catch (err) {
+    return {
+      auth: false,
+      status: err.response.status,
+      message: err.response.statusText
+    };
+  }
+};
+
+// ログイン状態をsessionからセット
+const authenticateFromSession = async store => {
+  try {
+    const res = await axios.post('/api/auth/session/', {csrf: document.getElementById('csrf').value});
+    store.state.auth.token = res.data.token;
+    store.state.auth.username = res.data.username;
+  } catch (err) {
+    store.state.auth.token = 'err';
+    store.state.auth.username = '';
+  }
+};
+
 // before route
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.auth)) {
+    // auth_tokenがセットされてないならセッションからの認証を試行
+    if (store.state.auth.token === '') {
+      await authenticateFromSession(store);
+    }
     // 管理画面ならルーティング前に認証処理
-    const res = await store.getters.authenticated;
+    const res = await authenticated(store);
     if (res.auth) {
       next();
     } else {
