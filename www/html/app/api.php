@@ -64,3 +64,11 @@ Application::api('post', '/api/auth/session/', function (Request $request, Respo
     // 基本的に一回しか実行しないように、セッション保存がない場合は適当な token を返す
     return ['token' => 'null', 'username' => ''];
 });
+
+// log out api
+Application::api('post', '/api/logout/', function (Request $request, Response $response, array $args, array $json) {
+    if (isset($_SESSION['auth_token'])) {
+        unset($_SESSION['auth_token']);
+    }
+    return ['token' => 'null', 'username' => ''];
+});

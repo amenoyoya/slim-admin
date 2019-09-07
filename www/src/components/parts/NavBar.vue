@@ -8,9 +8,9 @@
 
     <div class="navbar-menu">
       <div class="navbar-start">
-        <router-link to="/dashboard" class="navbar-item">
+        <a class="navbar-item" href="/">
           <i class="fas fa-home"></i> &nbsp; Home
-        </router-link>
+        </a>
       </div>
 
       <div class="navbar-end">
@@ -20,7 +20,7 @@
             <i class="fas fa-user"></i> &nbsp; {{ $store.state.auth.username }}
           </a>
           <div class="navbar-dropdown">
-            <a class="navbar-item">Log out</a>
+            <a class="navbar-item" @click.prevent="logout">Log out</a>
           </div>
         </div>
         <!-- サインイン｜ログイン -->
@@ -29,7 +29,7 @@
             <a class="button is-danger" disabled="true">
               <strong>Sign up</strong>
             </a>
-            <a class="button is-light">
+            <a class="button is-light" href="/login/">
               Log in
             </a>
           </div>
@@ -38,3 +38,17 @@
     </div>
   </nav>
 </template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  methods: {
+    async logout() {
+      const res = await axios.post('/api/logout/', {csrf: document.getElementById('csrf').value});
+      this.$store.commit('authenticate', res.data);
+      this.$router.push('/login/'); 
+    }
+  }
+};
+</script>
