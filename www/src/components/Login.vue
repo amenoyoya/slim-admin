@@ -38,20 +38,19 @@ export default {
       warning: '',
       error: '',
       username: '',
-      password: '',
-      token: ''
+      password: ''
     };
   },
   methods: {
     login() {
-      const csrf = document.getElementById('csrf').value;
-      
       this.warning = '', this.error = '';
-      axios.post('/api/login/', {csrf: csrf, username: this.username, password: this.password})
+      axios.post('/api/login/', {
+        csrf: document.getElementById('csrf').value, username: this.username, password: this.password
+      })
         .then((res) => {
-          if (res.data.login) {
-            this.token = res.data.token; // 認証トークン
-            this.$router.push('/dashboard/');
+          if (res.data.auth) {
+            this.$store.commit('authenticate', res.data);
+            this.$router.push(this.$route.query.redirect || '/');
           } else {
             this.warning = res.data.message;
           }

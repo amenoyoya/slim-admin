@@ -10,8 +10,8 @@
 <script>
 export default {
   mounted() {
-    // ログイン画面にリダイレクト
-    this.$router.push('/login/');
+    // ダッシュボードにリダイレクト
+    this.$router.push('/dashboard');
   }
 }
 </script>

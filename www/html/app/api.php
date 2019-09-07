@@ -33,13 +33,25 @@ Application::post('/test/', function (Request $request, Response $response, arra
 // login api
 Application::api('post', '/api/login/', function (Request $request, Response $response, array $args, array $json) {
     if (!isset($json['username']) || !isset($json['password'])) {
-        return ['login' => false, 'message' => 'Invalid parameters'];
+        return ['auth' => false, 'message' => 'Invalid parameters'];
     }
     if ($json['username'] === 'admin' && $json['password'] === 'pa$$wd') {
-        // tokenを発行してログインさせる
+        // tokenを発行しセッションに保存
         $authToken = bin2hex(openssl_random_pseudo_bytes(16));
         $_SESSION['auth_token'] = $authToken;
-        return ['login' => true, 'token' => $authToken, 'message' => 'Login as admin'];
+        // tokenとログインユーザー名を返す
+        return ['auth' => true, 'token' => $authToken, 'username' => 'admin', 'message' => 'Login as admin'];
     }
-    return ['login' => false, 'message' => 'Invalid username or password'];
+    return ['auth' => false, 'message' => 'Invalid username or password'];
+});
+
+// login confirm api
+Application::api('post', '/api/auth/', function (Request $request, Response $response, array $args, array $json) {
+    if (!isset($_SESSION['auth_token']) || empty($json['auth_token'])) {
+        return ['auth' => false, 'message' => 'Not authenticated yet'];
+    }
+    if ($_SESSION['auth_token'] !== $json['auth_token']) {
+        return ['auth' => false, 'message' => 'Authentication timed out'];
+    }
+    return ['auth' => true, 'message' => 'Authenticated'];
 });
