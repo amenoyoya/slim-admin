@@ -1,7 +1,10 @@
 <template>
-<section class="section">
-  <router-view></router-view>
-</section>
+  <div>
+    <nav-bar></nav-bar>
+    <section class="section">
+      <router-view></router-view>
+    </section>
+  </div>
 </template>
 
 <script>

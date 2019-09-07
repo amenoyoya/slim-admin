@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import NavBar from './components/parts/NavBar';
 import Home from './components/Home';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 
 Vue.use(Router);
+Vue.component('nav-bar', NavBar);
 
 const router = new Router({
   mode: 'history',
