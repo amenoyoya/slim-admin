@@ -71,9 +71,8 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
 
 ***
 
-## Description
+## Backend: PHP Slim Framework
 
-### Backend: PHP Slim Framework
 バックエンドではAPIの提供のみ行うことを想定している
 
 - `www/html/index.php` ※ 基本的にいじらない
@@ -143,7 +142,39 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
                 - `token`: 常に 'null' が入る
                 - `username`: 常に '' が入る
 
-### Database: Phinx + php-activerecord
+### Sample: Slim Framework API
+```php
+// phpinfo
+Application::get('/phpinfo/', function (Request $request, Response $response, array $args) {
+    $response->getBody()->write(phpinfo());
+    return $response;
+});
+
+// request info
+Application::get('/request/', function (Request $request, Response $response, array $args) {
+    $html = '';
+    foreach ($request->getHeaders() as $name => $values) {
+        $html .= '<dt>' . $name . '</dt><dd>' . implode(', ', $values) . '</dd>';
+    }
+    $response->getBody()->write("<dl>{$html}</dl>");
+    return $response;
+});
+
+// post test
+Application::post('/test/', function (Request $request, Response $response, array $args) {
+    $posted = [
+        'params' => $request->getParsedBody(),
+        'json' => json_decode($request->getBody())
+    ];
+    $response->getBody()->write(json_encode($posted));
+    return $response;
+});
+```
+
+***
+
+## Database: Phinx + php-activerecord
+
 - マイグレーション: Phinx
     - 設定ファイル: `www/html/phinx.yml`
     - コマンド:
@@ -171,7 +202,10 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
         % vendor/bin/phinx seed:run
         ```
 
-### Frontend: Vue + Vuex + Vue-Router
+***
+
+## Frontend: Vue + Vuex + Vue-Router
+
 - Vue: 認証関連の情報を保存
     - state:
         - `auth`:

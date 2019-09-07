@@ -6,6 +6,7 @@ import 'babel-polyfill'; // IE11 polyfill
 import NavBar from './components/parts/NavBar';
 import Home from './components/Home';
 import Login from './components/Login';
+import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 
 Vue.use(Router);
@@ -41,6 +42,11 @@ const router = new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: Signup
     },
     {
       path: '/dashboard',

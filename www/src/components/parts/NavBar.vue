@@ -26,9 +26,9 @@
         <!-- サインイン｜ログイン -->
         <div class="navbar-item" v-else>
           <div class="buttons">
-            <a class="button is-danger" disabled="true">
+            <router-link to="/signup/" class="button is-danger">
               <strong>Sign up</strong>
-            </a>
+            </router-link>
             <a class="button is-light" href="/login/">
               Log in
             </a>
