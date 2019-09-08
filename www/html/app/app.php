@@ -20,7 +20,7 @@ class Application {
             'notFoundHandler' => function ($c) {
                 return function (Request $request, Response $response) {
                     // 存在しないページを指定されたときは常に home リダイレクト
-                    return $response->withStatus(302)->withHeader('Location', '/');;
+                    return $response->withStatus(302)->withHeader('Location', '/?redirect=' . $request->getUri()->getPath());
                 };
             },
         ]);

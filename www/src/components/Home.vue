@@ -9,9 +9,11 @@
 
 <script>
 export default {
-  async mounted() {
-    // ダッシュボードにリダイレクト
-    this.$router.push('/dashboard');
+  mounted() {
+    if (this.$route.query.redirect) {
+      // redirect先がクエリに指定されているならリダイレクト
+      this.$router.push(this.$route.query.redirect);
+    }
   }
 }
 </script>
