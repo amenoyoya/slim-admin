@@ -6,7 +6,15 @@
       </a>
     </div>
 
-    <div class="navbar-menu">
+    <!-- スマホ版 navbar-menu -->
+    <a role="button" :class="'navbar-burger burger ' + burger" aria-label="menu" aria-expanded="false" data-target="default-navbar" @click.prevent="expandBurger">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+    
+    <!-- PC版 navbar-menu -->
+    <div id="default-navbar" :class="'navbar-menu ' + burger">
       <div class="navbar-start">
         <a class="navbar-item" href="/">
           <i class="fas fa-home"></i> &nbsp; Home
@@ -43,7 +51,19 @@
 import axios from 'axios';
 
 export default {
+  data() {
+    return {
+      burger: ''
+    }
+  },
   methods: {
+    expandBurger() {
+      if (this.burger === '') {
+        this.burger = 'is-active';
+      } else {
+        this.burger = '';
+      }
+    },
     async logout() {
       const res = await axios.post('/api/logout/', {csrf: document.getElementById('csrf').value});
       this.$store.commit('authenticate', res.data);
