@@ -13,6 +13,8 @@ export default {
     if (this.$route.query.redirect) {
       // redirect先がクエリに指定されているならリダイレクト
       this.$router.push(this.$route.query.redirect);
+    } else {
+      this.$router.push('/dashboard/');
     }
   }
 }

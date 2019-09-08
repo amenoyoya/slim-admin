@@ -46,17 +46,35 @@ class Application {
         return self::$app->delete($route, $callback);
     }
 
+    public static function execute()
+    {
+        return self::$app->run();
+    }
+
+    /**
+     * クライアントIPアドレス取得
+     */
+    public static function getClientIp()
+    {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        if (isset($_SERVER['HTTP_X_REAL_IP'])) {
+            return $_SERVER['HTTP_X_REAL_IP'];
+        }
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    /**
+     * 外部実行用API定義メソッド: 誰でも or 許可されたIP から実行可能
+     */
     public static function api($method, $route, callable $callback)
     {
-        return self::$app->post($route, function (Request $request, Response $response, array $args) use ($callback) {
+        return self::$app->$method($route, function (Request $request, Response $response, array $args) use ($callback) {
             // only accept json data
             $json = json_decode($request->getBody(), true);
-            // confirm csrf token & host name
-            if (!isset($_SESSION['csrf_token']) ||
-                !isset($json['csrf']) ||
-                $_SESSION['csrf_token'] !== $json['csrf'] ||
-                $request->getUri()->getHost() !== CONFIG['web']['host_name']
-            ) {
+            // check ips
+            if (!self::checkIPs()) {
                 return $response->withStatus(403); // Forbidden error
             }
             // callback: return array $json;
@@ -65,8 +83,55 @@ class Application {
         });
     }
 
-    public static function execute()
+    /**
+     * 内部実行用API定義メソッド: CSRFトークンとホスト名のチェックを行う
+     * - フロントエンドJavaScriptからAjax通信で実行する場合などに使う
+     */
+    public static function cmd($method, $route, callable $callback)
     {
-        return self::$app->run();
+        return self::$app->$method($route, function (Request $request, Response $response, array $args) use ($callback) {
+            // only accept json data
+            $json = json_decode($request->getBody(), true);
+            // check csrf token & host name
+            $check = self::checkCsrf($json);
+            if (!self::checkCsrf($json) || $request->getUri()->getHost() !== $_SERVER['SERVER_NAME']) {
+                return $response->withStatus(403); // Forbidden error
+            }
+            // callback: return array $json;
+            $response->getBody()->write(json_encode($callback($request, $response, $args, $json)));
+            return $response->withHeader('Content-Type', 'application/json');
+        });
+    }
+
+    /**
+     * API IP制限: config.yml/api.ips の設定に従ってチェックする
+     * @return bool true => 許可されているIP or 制限なし, false => 許可されていないIP
+     */
+    private static function checkIPs()
+    {
+        if (is_array(CONFIG['api']['accept_ips'])) {
+            if (in_array(self::getClientIp(), CONFIG['api']['accept_ips'])) {
+                return true;
+            }
+            return false;
+        }
+        if (CONFIG['api']['accept_ips'] === true) {
+            // no limit
+            return true;
+        }
+        // all denied
+        return false;
+    }
+
+    /**
+     * API CSRFチェック
+     * @return bool true => CSRF一致, false => CSRF不一致
+     */
+    private static function checkCsrf(array $json)
+    {
+        if (!isset($_SESSION['csrf_token']) || !isset($json['csrf']) || $_SESSION['csrf_token'] !== $json['csrf']) {
+            return false;
+        }
+        return true;
     }
 }

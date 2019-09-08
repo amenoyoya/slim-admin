@@ -404,7 +404,7 @@ eval("/*!\n * Determine if an object is a Buffer\n *\n * @author   Feross Aboukh
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n//\n//\n//\n//\n//\n//\n//\n//\n//\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  mounted: function mounted() {\n    if (this.$route.query.redirect) {\n      // redirect先がクエリに指定されているならリダイレクト\n      this.$router.push(this.$route.query.redirect);\n    }\n  }\n});\n\n//# sourceURL=webpack:///./src/components/Home.vue?./node_modules/babel-loader/lib??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options");
+eval("__webpack_require__.r(__webpack_exports__);\n//\n//\n//\n//\n//\n//\n//\n//\n//\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  mounted: function mounted() {\n    if (this.$route.query.redirect) {\n      // redirect先がクエリに指定されているならリダイレクト\n      this.$router.push(this.$route.query.redirect);\n    } else {\n      this.$router.push('/dashboard/');\n    }\n  }\n});\n\n//# sourceURL=webpack:///./src/components/Home.vue?./node_modules/babel-loader/lib??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options");
 
 /***/ }),
 

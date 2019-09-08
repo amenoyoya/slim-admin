@@ -1,5 +1,5 @@
 web:
-    host_name: slim-admin.localhost
+    # ルートドキュメントHTML（基本いじらない）
     home_html: |
         <!DOCTYPE html>
         <html lang="ja">
@@ -16,6 +16,14 @@ web:
                 <script src="/static/js/bundle.js"></script>
             </body>
         </html>
+api:
+    # API実行許可するIPを指定
+    ## true 指定の場合は制限なし
+    ## false 指定の場合は非公開
+    accept_ips:
+        - "172.17.0.1"
 db:
-    use: true
+    # Database利用/無効化
+    use: false
+    # Database利用の場合、Database接続設定ファイル（基本いじらない）
     config_file: ./phinx.yml

@@ -88,15 +88,21 @@ $ yarn watch # js, vue ファイル変更検知＆バンドル
             - それぞれのHTTPメソッドのリクエストをルーティングする処理を定義
         - `api` staticメソッド:
             - `(method::string, route::string, (::Request, ::Response, args::array, json::array) -> ::Response) -> ::void`
+            - 外部からの実行を許可するAPIを定義
+            - `www/html/config.yml`設定ファイルの `api.accept_ips` で実行を許可するIPアドレスを指定可能
+        - `cmd` staticメソッド:
+            - `(method::string, route::string, (::Request, ::Response, args::array, json::array) -> ::Response) -> ::void`
             - 同一サーバー内からの実行のみを許可するAPIを定義
             - CSRFトークンとホスト名をチェックする
 - `www/html/config.yml`
     - 各種設定を行うためのファイル（`CONFIG['web']['host_name']` などのようにして参照）
-        - **web.host_name**:
-            - `Slim\Framework\Application::api`メソッドで定義されるAPIの実行を許可するホスト名を設定
         - **web.home_html**:
             - ドキュメントルートで生成されるHTMLを定義
             - アプリケーションは Vue で動かすことを前提としているため、基本的にいじることはない
+        - **api.accept_ips**:
+            - APIの実行を許可するIPを配列で指定
+            - trueを指定した場合は制限なし
+            - falseを指定した場合はAPI非公開
         - **db.use**:
             - Databaseを使う場合は true, それ以外なら false を指定
             - `DB['environments']['default_database']` などのようにして参照

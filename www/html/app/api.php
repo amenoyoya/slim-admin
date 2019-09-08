@@ -5,8 +5,8 @@ namespace Slim\Framework;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-// login api
-Application::api('post', '/api/login/', function (Request $request, Response $response, array $args, array $json) {
+// login inner api
+Application::cmd('post', '/api/login/', function (Request $request, Response $response, array $args, array $json) {
     if (!isset($json['username']) || !isset($json['password'])) {
         return ['auth' => false, 'message' => 'Invalid parameters'];
     }
@@ -22,8 +22,8 @@ Application::api('post', '/api/login/', function (Request $request, Response $re
     return ['auth' => false, 'message' => 'Invalid username or password'];
 });
 
-// login confirm api
-Application::api('post', '/api/auth/', function (Request $request, Response $response, array $args, array $json) {
+// login confirm inner api
+Application::cmd('post', '/api/auth/', function (Request $request, Response $response, array $args, array $json) {
     if (!isset($_SESSION['auth_token']) || empty($json['auth_token'])) {
         return ['auth' => false, 'message' => 'Not authenticated yet'];
     }
@@ -33,8 +33,8 @@ Application::api('post', '/api/auth/', function (Request $request, Response $res
     return ['auth' => true, 'message' => 'Authenticated'];
 });
 
-// get session login info api
-Application::api('post', '/api/auth/session/', function (Request $request, Response $response, array $args, array $json) {
+// get session login info inner api
+Application::cmd('post', '/api/auth/session/', function (Request $request, Response $response, array $args, array $json) {
     if (isset($_SESSION['auth_token']) && isset($_SESSION['auth_username'])) {
         return ['token' => $_SESSION['auth_token'], 'username' => $_SESSION['auth_username']];
     }
@@ -42,8 +42,8 @@ Application::api('post', '/api/auth/session/', function (Request $request, Respo
     return ['token' => 'null', 'username' => ''];
 });
 
-// log out api
-Application::api('post', '/api/logout/', function (Request $request, Response $response, array $args, array $json) {
+// log out inner api
+Application::cmd('post', '/api/logout/', function (Request $request, Response $response, array $args, array $json) {
     if (isset($_SESSION['auth_token'])) {
         unset($_SESSION['auth_token']);
     }
@@ -53,8 +53,8 @@ Application::api('post', '/api/logout/', function (Request $request, Response $r
     return ['token' => 'null', 'username' => ''];
 });
 
-// sign up api
-Application::api('post', '/api/signup/', function (Request $request, Response $response, array $args, array $json) {
+// sign up inner api
+Application::cmd('post', '/api/signup/', function (Request $request, Response $response, array $args, array $json) {
     if (!isset($json['username']) || !isset($json['password'])
         || strlen($json['username']) > 15 || strlen($json['password']) > 30
     ) {
@@ -73,4 +73,18 @@ Application::api('post', '/api/signup/', function (Request $request, Response $r
         return ['reg' => true, 'message' => "User '{$user->name}' registered"];
     }
     return ['reg' => false, 'message' => 'Database error occured'];
+});
+
+// phpinfo
+Application::api('get', '/phpinfo/', function (Request $request, Response $response, array $args) {
+    return ['info' => phpinfo()];
+});
+
+// request info
+Application::api('get', '/request/', function (Request $request, Response $response, array $args) {
+    $html = '';
+    foreach ($request->getHeaders() as $name => $values) {
+        $html .= '<dt>' . $name . '</dt><dd>' . implode(', ', $values) . '</dd>';
+    }
+    return ['html' => "<dl>{$html}</dl>"];
 });
