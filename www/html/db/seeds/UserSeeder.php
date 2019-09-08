@@ -14,7 +14,7 @@ class UserSeeder extends AbstractSeed
             [
                 'name'     => 'admin',
                 'password' => password_hash('pa$$wd', PASSWORD_BCRYPT),
-                'created'  => date('Y-m-d H:i:s'),
+                'created_at'  => date('Y-m-d H:i:s'),
             ]
         ];
 

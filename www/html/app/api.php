@@ -70,7 +70,7 @@ Application::api('post', '/api/signup/', function (Request $request, Response $r
     $user->name = $json['username'];
     $user->password = password_hash($json['password'], PASSWORD_BCRYPT);
     if ($user->save()) {
-        return ['reg' => true, 'message' => "User '{$user->name}' registerd"];
+        return ['reg' => true, 'message' => "User '{$user->name}' registered"];
     }
     return ['reg' => false, 'message' => 'Database error occured'];
 });

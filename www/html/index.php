@@ -19,6 +19,12 @@ require_once __DIR__ . '/app/app.php';
 if (CONFIG['db']['use']) {
     define('DB', Yaml::parse(file_get_contents(CONFIG['db']['config_file'])));
 
+    /**
+     * MySQL 5.6 だと datetime のフォーマットにタイムゾーンが入っているとエラーになるため修正
+     * 参考: https://github.com/langrid/langrid-php-library/issues/10
+     */
+    \ActiveRecord\Connection::$datetime_format = 'Y-m-d H:i:s';
+
     \ActiveRecord\Config::initialize(function($cfg) {
         $env = DB['environments'];
         // $cfg->set_model_directory(__DIR__ . '/' . DB['paths']['models']);
