@@ -75,16 +75,41 @@ Application::cmd('post', '/api/signup/', function (Request $request, Response $r
     return ['reg' => false, 'message' => 'Database error occured'];
 });
 
-// phpinfo
-Application::api('get', '/phpinfo/', function (Request $request, Response $response, array $args) {
-    return ['info' => phpinfo()];
-});
+/**
+ * mail test
+ */
+use \PHPMailer\PHPMailer\PHPMailer;
+use \PHPMailer\PHPMailer\Exception;
 
-// request info
-Application::api('get', '/request/', function (Request $request, Response $response, array $args) {
-    $html = '';
-    foreach ($request->getHeaders() as $name => $values) {
-        $html .= '<dt>' . $name . '</dt><dd>' . implode(', ', $values) . '</dd>';
+Application::get('/mail/', function (Request $request, Response $response, array $args) {
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        $mail->SMTPDebug = 2;                                       // Enable verbose debug output
+        $mail->isSMTP();                                            // Set mailer to use SMTP
+        $mail->Host       = 'mailhog';                              // Specify main and backup SMTP servers
+        // $mail->SMTPAuth   = false;
+        // $mail->SMTPSecure = 'tls';                                  // Enable TLS encryption, `ssl` also accepted
+        $mail->Port       = 1025;                                   // TCP port to connect to
+
+        //Recipients
+        $mail->setFrom('from@example.com', 'Mailer');
+        $mail->addAddress('to@example.net', 'Joe User');
+        $mail->addCC('cc@example.com');
+        $mail->addBCC('bcc@example.com');
+
+        // Content
+        $mail->isHTML(true);                                  // Set email format to HTML
+        $mail->Subject = 'Here is the subject';
+        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        $mail->send();
+        $response->getBody()->write('Message has been sent');
+        return $response;
+    } catch (Exception $e) {
+        $response->getBody()->write("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        return $response;
     }
-    return ['html' => "<dl>{$html}</dl>"];
 });
