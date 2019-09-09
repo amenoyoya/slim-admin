@@ -35,15 +35,18 @@ Administrator page by PHP slim-framework
 
 ### Setup
 ```bash
-# Dockerコンテナをビルド＆起動
-$ docker-compose build
-$ docker-compose up -d
+# webコンテナの www-dataユーザーと Docker実行ユーザーのIDを揃えて Dockerコンテナ起動
+$ export UID && docker-compose up -d
 
 # webコンテナにアタッチ
 $ docker-compose exec web bash
 
 # composer.json に記述されたパッケージをインストール
 % composer install
+
+# Database準備
+% vendor/bin/phinx migrate
+% vendor/bin/phinx seed:run
 
 # webコンテナからデタッチ
 % exit

@@ -46,6 +46,21 @@ class Application {
         return self::$app->delete($route, $callback);
     }
 
+    public static function options($route, callable $callback)
+    {
+        return self::$app->options($route, $callback);
+    }
+
+    public static function patch($route, callable $callback)
+    {
+        return self::$app->patch($route, $callback);
+    }
+
+    public static function map(array $methods, $route, callable $callback)
+    {
+        return self::$app->map($methods, $route, $callback);
+    }
+
     public static function execute()
     {
         return self::$app->run();
@@ -66,21 +81,43 @@ class Application {
     }
 
     /**
+     * CORS対応Response生成
+     */
+    public static function CORS(Response $response)
+    {
+        // 全てのリクエスト元, リクエストメソッド, リクエストヘッダー, レスポンスヘッダーを許可
+        return $response
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Methods', '*')
+            ->withHeader('Access-Control-Allow-Headers', '*')
+            ->withHeader('Access-Control-Expose-Headers', '*');
+    }
+
+    /**
      * 外部実行用API定義メソッド: 誰でも or 許可されたIP から実行可能
      */
     public static function api($method, $route, callable $callback)
     {
-        return self::$app->$method($route, function (Request $request, Response $response, array $args) use ($callback) {
+        $proc = function (Request $request, Response $response, array $args) use ($callback) {
             // only accept json data
             $json = json_decode($request->getBody(), true);
             // check ips
             if (!self::checkIPs()) {
-                return $response->withStatus(403); // Forbidden error
+                return self::CORS($response->withStatus(403)); // Forbidden error
             }
-            // callback: return array $json;
-            $response->getBody()->write(json_encode($callback($request, $response, $args, $json)));
-            return $response->withHeader('Content-Type', 'application/json');
-        });
+            // callback
+            $res = $callback($request, $response, $args, $json? $json: []);
+            if (is_array($res)) {
+                // return json data
+                $response->getBody()->write(json_encode($res));
+                return self::CORS($response->withHeader('Content-Type', 'application/json'));
+            }
+            return self::CORS($res);
+        };
+        if (is_array($method)) {
+            return self::$app->map($method, $route, $proc);
+        }
+        return self::$app->$method($route, $proc);
     }
 
     /**
@@ -89,7 +126,7 @@ class Application {
      */
     public static function cmd($method, $route, callable $callback)
     {
-        return self::$app->$method($route, function (Request $request, Response $response, array $args) use ($callback) {
+        $proc = function (Request $request, Response $response, array $args) use ($callback) {
             // only accept json data
             $json = json_decode($request->getBody(), true);
             // check csrf token & host name
@@ -97,10 +134,19 @@ class Application {
             if (!self::checkCsrf($json) || $request->getUri()->getHost() !== $_SERVER['SERVER_NAME']) {
                 return $response->withStatus(403); // Forbidden error
             }
-            // callback: return array $json;
-            $response->getBody()->write(json_encode($callback($request, $response, $args, $json)));
-            return $response->withHeader('Content-Type', 'application/json');
-        });
+            // callback
+            $res = $callback($request, $response, $args, $json? $json: []);
+            if (is_array($res)) {
+                // return json data
+                $response->getBody()->write(json_encode($res));
+                return $response->withHeader('Content-Type', 'application/json');
+            }
+            return $res;
+        };
+        if (is_array($method)) {
+            return self::$app->map($method, $route, $proc);
+        }
+        return self::$app->$method($route, $proc);
     }
 
     /**
