@@ -24,6 +24,23 @@ class Application {
                 };
             },
         ]);
+
+        // GET / => config.server.root_html 表示
+        self::get('/', function (Request $request, Response $response, array $args) {
+            if (!isset($_SESSION['csrf'])) {
+                // generate csrf token
+                $csrfToken = bin2hex(openssl_random_pseudo_bytes(16));
+                // save csrf token to session
+                $_SESSION['csrf'] = $csrfToken;
+            }
+            $response->getBody()->write(sprintf(CONFIG['server']['root_html'], $_SESSION['csrf']));
+            return $response;
+        });
+
+        // POST /api/ => APIサーバー設定を返す
+        self::cmd('post', '/api/', function (Request $request, Response $response, array $args) {
+            return ['endpoints' => CONFIG['endpoints']];
+        });
     }
 
     public static function get($route, callable $callback)
@@ -130,7 +147,7 @@ class Application {
             // only accept json data
             $json = json_decode($request->getBody(), true);
             // check csrf token & host name
-            if (!self::checkCsrf($json) || $request->getUri()->getHost() !== $_SERVER['SERVER_NAME']) {
+            if (!self::checkCsrf($json) || $request->getUri()->getHost() !== CONFIG['server']['host']) {
                 return $response->withStatus(403); // Forbidden error
             }
             // callback
@@ -174,7 +191,7 @@ class Application {
      */
     private static function checkCsrf(array $json)
     {
-        if (!isset($_SESSION['csrf_token']) || !isset($json['csrf']) || $_SESSION['csrf_token'] !== $json['csrf']) {
+        if (!isset($_SESSION['csrf']) || !isset($json['csrf']) || $_SESSION['csrf'] !== $json['csrf']) {
             return false;
         }
         return true;

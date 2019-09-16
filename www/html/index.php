@@ -53,18 +53,6 @@ session_start();
 // create slim framework app
 Application::create();
 
-// home routing
-Application::get('/', function (Request $request, Response $response, array $args) {
-    if (!isset($_SESSION['csrf_token'])) {
-        // generate csrf token
-        $csrfToken = bin2hex(openssl_random_pseudo_bytes(16));
-        // save csrf token to session
-        $_SESSION['csrf_token'] = $csrfToken;
-    }
-    $response->getBody()->write(sprintf(CONFIG['web']['home_html'], $_SESSION['csrf_token']));
-    return $response;
-});
-
 // load all api
 require_once __DIR__ . '/app/api.php';
 

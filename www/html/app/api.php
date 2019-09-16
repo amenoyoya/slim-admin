@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 // login inner api
-Application::cmd('post', '/api/login/', function (Request $request, Response $response, array $args, array $json) {
+Application::cmd('post', CONFIG['endpoints']['login'], function (Request $request, Response $response, array $args, array $json) {
     if (!isset($json['username']) || !isset($json['password'])) {
         return ['auth' => false, 'message' => 'Invalid parameters'];
     }
@@ -17,13 +17,13 @@ Application::cmd('post', '/api/login/', function (Request $request, Response $re
         $_SESSION['auth_token'] = $authToken;
         $_SESSION['auth_username'] = $users[0]->name;
         // tokenとログインユーザー名を返す
-        return ['auth' => true, 'token' => $authToken, 'username' => $users[0]->name, 'message' => 'Login as admin'];
+        return ['login' => true, 'token' => $authToken, 'username' => $users[0]->name, 'message' => 'Login as admin'];
     }
-    return ['auth' => false, 'message' => 'Invalid username or password'];
+    return ['login' => false, 'message' => 'Invalid username or password'];
 });
 
 // login confirm inner api
-Application::cmd('post', '/api/auth/', function (Request $request, Response $response, array $args, array $json) {
+Application::cmd('post', CONFIG['endpoints']['auth'], function (Request $request, Response $response, array $args, array $json) {
     if (!isset($_SESSION['auth_token']) || empty($json['auth_token'])) {
         return ['auth' => false, 'message' => 'Not authenticated yet'];
     }
@@ -34,7 +34,7 @@ Application::cmd('post', '/api/auth/', function (Request $request, Response $res
 });
 
 // get session login info inner api
-Application::cmd('post', '/api/auth/session/', function (Request $request, Response $response, array $args, array $json) {
+Application::cmd('post', CONFIG['endpoints']['auth_session'], function (Request $request, Response $response, array $args, array $json) {
     if (isset($_SESSION['auth_token']) && isset($_SESSION['auth_username'])) {
         return ['token' => $_SESSION['auth_token'], 'username' => $_SESSION['auth_username']];
     }
@@ -43,7 +43,7 @@ Application::cmd('post', '/api/auth/session/', function (Request $request, Respo
 });
 
 // log out inner api
-Application::cmd('post', '/api/logout/', function (Request $request, Response $response, array $args, array $json) {
+Application::cmd('post', CONFIG['endpoints']['logout'], function (Request $request, Response $response, array $args, array $json) {
     if (isset($_SESSION['auth_token'])) {
         unset($_SESSION['auth_token']);
     }
@@ -54,7 +54,7 @@ Application::cmd('post', '/api/logout/', function (Request $request, Response $r
 });
 
 // sign up inner api
-Application::cmd('post', '/api/signup/', function (Request $request, Response $response, array $args, array $json) {
+Application::cmd('post', CONFIG['endpoints']['signup'], function (Request $request, Response $response, array $args, array $json) {
     if (!isset($json['username']) || !isset($json['password'])
         || strlen($json['username']) > 15 || strlen($json['password']) > 30
     ) {

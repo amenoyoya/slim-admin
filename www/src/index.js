@@ -35,6 +35,8 @@ Vue.component('nav-bar', NavBar);
 // store: グローバル状態管理
 const store = new Vuex.Store({
   state: {
+    // APIサーバー設定
+    config: {},
     // ログイン状態
     auth: {
       token: '',
@@ -42,6 +44,11 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    // APIサーバー設定をセット
+    configure(state, config) {
+      state.config = config;
+    },
+
     // ログイン状態をセット
     authenticate(state, auth) {
       state.auth.token = auth.token;
@@ -77,23 +84,19 @@ const router = new Router({
 // ログイン済みか確認
 const authenticated = async (store) => {
   try {
-    const res = await axios.post('/api/auth/', {
+    const res = await axios.post(store.state.config.endpoints.auth, {
       csrf: document.getElementById('csrf').value, auth_token: store.state.auth.token
     });
     return res.data;
   } catch (err) {
-    return {
-      auth: false,
-      status: err.response.status,
-      message: err.response.statusText
-    };
+    return {auth: false};
   }
 };
 
 // ログイン状態をsessionからセット
 const authenticateFromSession = async store => {
   try {
-    const res = await axios.post('/api/auth/session/', {csrf: document.getElementById('csrf').value});
+    const res = await axios.post(store.state.config.endpoints.auth_session, {csrf: document.getElementById('csrf').value});
     store.state.auth.token = res.data.token;
     store.state.auth.username = res.data.username;
   } catch (err) {

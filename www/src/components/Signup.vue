@@ -69,7 +69,7 @@ export default {
   methods: {
     signup() {
       this.info = '', this.warning = '', this.error = '';
-      axios.post('/api/signup/', {
+      axios.post(this.$store.state.config.endpoints.signup, {
         csrf: document.getElementById('csrf').value, username: this.username, password: this.password
       })
         .then((res) => {
