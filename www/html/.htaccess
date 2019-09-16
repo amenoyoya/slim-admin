@@ -6,7 +6,15 @@
   deny from all
 </Files>
 
+# RewriteRules
 RewriteEngine On
+
+## 末尾のスラッシュを補完
+RewriteCond %{REQUEST_URI} !/$
+RewriteCond %{REQUEST_URI} !\.[^/\.]+$
+RewriteRule .* %{REQUEST_URI}/ [R=301,L]
+
+## 存在しないパスは全て index.php にリダイレクト
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
