@@ -23,8 +23,8 @@
 
       <div class="navbar-end">
         <!-- ユーザー名｜ログアウト -->
-        <div class="navbar-item has-dropdown is-hoverable" v-if="$store.state.auth.username !== ''">
-          <a class="navbar-link">
+        <div :class="'navbar-item has-dropdown ' + dropdown" v-if="$store.state.auth.username !== ''">
+          <a class="navbar-link" @click.prevent="switchDropDown">
             <i class="fas fa-user"></i> &nbsp; {{ $store.state.auth.username }}
           </a>
           <div class="navbar-dropdown">
@@ -53,7 +53,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      burger: ''
+      burger: '',
+      dropdown: false,
     }
   },
   methods: {
@@ -62,6 +63,13 @@ export default {
         this.burger = 'is-active';
       } else {
         this.burger = '';
+      }
+    },
+    switchDropDown() {
+      if (this.dropdown === '') {
+        this.dropdown = 'is-active';
+      } else {
+        this.dropdown = '';
       }
     },
     async logout() {

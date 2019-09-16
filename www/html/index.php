@@ -25,7 +25,7 @@ if (CONFIG['db']['use']) {
      */
     \ActiveRecord\Connection::$datetime_format = 'Y-m-d H:i:s';
 
-    \ActiveRecord\Config::initialize(function($cfg) {
+    \ActiveRecord\Config::initialize(function ($cfg) {
         $env = DB['environments'];
         // $cfg->set_model_directory(__DIR__ . '/' . DB['paths']['models']);
         $cfg->set_connections([

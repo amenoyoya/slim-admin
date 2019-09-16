@@ -53,7 +53,7 @@ export default {
         .then((res) => {
           if (res.data.auth) {
             this.$store.commit('authenticate', res.data);
-            this.$router.push(this.$route.query.redirect || '/');
+            this.$router.push(this.$route.query.redirect || '/dashboard');
           } else {
             this.warning = res.data.message;
           }

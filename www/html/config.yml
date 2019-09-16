@@ -24,6 +24,6 @@ api:
         - "172.17.0.1"
 db:
     # Database利用/無効化
-    use: false
+    use: true
     # Database利用の場合、Database接続設定ファイル（基本いじらない）
     config_file: ./phinx.yml
