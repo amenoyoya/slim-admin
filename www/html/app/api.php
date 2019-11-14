@@ -113,3 +113,43 @@ Application::get('/mail/', function (Request $request, Response $response, array
         return $response;
     }
 });
+
+Application::get('/smtp/mail/', function (Request $request, Response $response, array $args) {
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+        $mail->SMTPDebug = 2;                                       // Enable verbose debug output
+        $mail->isSMTP();                                            // Set mailer to use SMTP
+        $mail->Host       = 'XXXXX.sakura.ne.jp';                   // Specify main and backup SMTP servers
+        $mail->Port       = 587;                                    // TCP port to connect to
+        $mail->SMTPSecure = 'tls';                                  // Enable TLS encryption, `ssl` also accepted
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'XXXXX@XXXXX.sakura.ne.jp';
+        $mail->Password   = 'XXXXX';
+
+        //Recipients
+        $mail->setFrom('XXXXX@XXXXX.sakura.ne.jp', 'Mailer');
+        $mail->addAddress('anonymous@example.dev', 'anyone');
+
+        // Content
+        $mail->isHTML(true);                                  // Set email format to HTML
+        $mail->Subject = 'Here is the subject';
+        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        $mail->send();
+        $response->getBody()->write('Message has been sent');
+        return $response;
+    } catch (Exception $e) {
+        $response->getBody()->write("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        return $response;
+    }
+});
